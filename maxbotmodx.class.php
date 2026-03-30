@@ -7,6 +7,14 @@ class maxBotModx {
     private $subscribeUrl;
     private $apiUrl = 'https://platform-api.max.ru';
 
+    /**
+     * Конструктор класса MaxBot
+     *
+     * @param modX &$modx Ссылка на объект modX
+     * @param string $name Имя бота (не используется в текущей логике)
+     * @param string $token Токен для авторизации в API Max.ru
+     * @param string $subscribeUrl URL-адрес вебхука для подписки
+     */
     public function __construct(modX &$modx, $name, $token, $subscribeUrl) {
         $this->modx = &$modx;
         $this->name = $name;
@@ -24,15 +32,24 @@ class maxBotModx {
         ], 'POST');
     }
 
+    /**
+     * Получение списка активных подписок
+     *
+     * @return array Результат запроса к API
+     */
     public function getSubscriptions() {
         return $this->request('subscriptions', [], 'GET');
     }
 
+    /**
+     * Удаление подписки по URL
+     *
+     * @param string $url URL подписки, которую нужно удалить
+     * @return array Результат запроса к API
+     */
     public function deleteSubscription($url) {
         return $this->request('subscriptions', ['url' => $url], 'DELETE');
     }
-
-
 
     /**
      * Отправка сообщения с поддержкой HTML/Markdown
@@ -44,7 +61,7 @@ class maxBotModx {
         // Формируем параметры в корне объекта, как требует API
         $params = [
             'text'   => $text,
-            'format' => 'html', // Используем "html" 
+            'format' => 'html', // Используем "html"
             'notify' => true    // Уведомление включено по умолчанию
         ];
 
@@ -58,6 +75,8 @@ class maxBotModx {
 
     /**
      * Чтение входящего Webhook
+     *
+     * @return array|null Декодированные данные из тела запроса или null, если тело пусто
      */
     public function handleWebhook() {
         $input = file_get_contents('php://input');
@@ -71,6 +90,12 @@ class maxBotModx {
 
     /**
      * Универсальный метод запроса
+     *
+     * @param string $endpoint Конечная точка API (например, 'messages', 'subscriptions')
+     * @param array $params Параметры тела запроса (для POST/PUT/PATCH) или GET-параметры (для GET)
+     * @param string $method HTTP-метод ('GET', 'POST', 'PUT', 'DELETE', 'PATCH')
+     * @param array $queryParams Дополнительные GET-параметры, которые нужно добавить к URL
+     * @return array Результат выполнения запроса: статус, URL, метод, декодированные данные ответа
      */
     private function request($endpoint, $params = [], $method = 'POST', $queryParams = []) {
         $url = rtrim($this->apiUrl, '/') . '/' . ltrim($endpoint, '/');
@@ -109,6 +134,4 @@ class maxBotModx {
             'data' => json_decode($response, true)
         ];
     }
-
-
 }
