@@ -1,0 +1,3 @@
+<b>Версия 0.0.1-v</b><br>
+Автор: <a href="https://t.me/vectorserver" target="_blank">@vectorserver</a><br>
+- Начальная сборка пакета MAX API.
