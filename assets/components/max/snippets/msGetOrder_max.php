@@ -12,17 +12,20 @@ $miniShop2->initialize($modx->context->key);
 $token = $modx->getOption('tgBot_access_token', null, false);
 $recipients = json_decode($modx->getOption('tgBot_admins'), true);
 
-$order = $modx->getObject('msOrder', $id ?? $_GET['msorder']);
-$oid = "msGetOrder_max" . $order->id.rand(66666,777777777);
+
+$order = $modx->getObject('msOrder', [
+    'id' => $id ?? $_GET['msorder'],
+    [
+        'order_comment:NOT LIKE' => '%maxsend%',
+        'OR:order_comment:IS' => null,
+    ]
+]);
+
 
 if ($order) {
 
-    $modx->setPlaceholders($order->toArray(), 'tgorder.');
-}
+    $modx->setPlaceholders($order->toArray(), 'max.');
 
-if (!$_SESSION[$oid] && $order) {
-
-    $_SESSION[$oid] = 1;
     $products = [];
 
     $cart_count = 0;
@@ -170,5 +173,8 @@ if (!$_SESSION[$oid] && $order) {
 
     $message = rawurlencode($message);
     var_dump(file_get_contents("https://bg75.ru/assets/components/max/connector.php?cmd=send&msg=$message"));
+    $order->set('order_comment',"maxsend: ".date('d.m.Y H:i:s')."\n");
+    $order->save();
+
     return true;
 }
