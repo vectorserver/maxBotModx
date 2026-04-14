@@ -4,7 +4,7 @@
  */
 echo "<pre>";
 $pkgName = 'max';
-$pkgVersion = '0.0.3'; // Обновил версию
+$pkgVersion = '0.0.4'; // Обновил версию
 $pkgRelease = 'v';
 
 $configFile = dirname(dirname(__FILE__)) . '/core/config/config.inc.php';
@@ -31,7 +31,7 @@ $builder->registerNamespace($pkgName, false, true, '{core_path}components/max/')
 // 2. Создание Категории (max v 001)
 $category = $modx->newObject('modCategory');
 $category->set('id', 1);
-$category->set('category', 'max v 001');
+$category->set('category', 'max');
 
 // 3. Системные настройки
 $settings = [
